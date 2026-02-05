@@ -1,5 +1,14 @@
 <%-include("partials/header.ejs",{title:"Error",user:user})%>
 
-<h1>Something went wrong</h1>
+<div style="text-align: center; margin-top: 50px;">
+    <h1>Something went wrong</h1>
+    <p style="color: red;"><%= error %></p>
+
+    <hr>
+
+    <a href="/" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">
+        Return to Home
+    </a>
+</div>
 
 <%-include("partials/footer.ejs")%>

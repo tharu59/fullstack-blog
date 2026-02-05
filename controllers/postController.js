@@ -12,64 +12,105 @@ exports.getPostForm = asyncHandler(async (req, res) => {
 });
 
 // creating new post
+// exports.createPost = asyncHandler(async (req, res) => {
+//   try {
+//     const { title, content } = req.body;
+// from here to validation excluded
+// console.log(req.files);
+// const newPost = await Post.create({
+//   title,
+//   content,
+//   author: req.user._id,
+// });
+// console.log(newPost);
+// res.redirect("/posts");
+
+// validation --excluded
+// if (!req.files || req.files.length === 0) {
+//   return res.render("newPost", {
+//     title: "Create Post",
+//     user: req.user,
+//     error: "At least one image is required",
+//   });
+// }
+
+// const images = await Promise.all(
+//   req.files.map(async (file) => {
+// console.log(images);
+// save the images into db
+//     const newFile = new File({
+//       url: file.path,
+//       public_id: file.filename,
+//       uploaded_by: req.user._id,
+//     });
+//     await newFile.save();
+//     // console.log(newFile);
+//     return {
+//       url: newFile.url,
+//       public_id: newFile.public_id,
+//     };
+//   }),
+// );
+
+// // create post
+// const newPost = new Post({
+//   title,
+//   content,
+//   author: req.user._id,
+//   images,
+// });
+// await newPost.save();
+// res.render("newPost", {
+//   title: "Create Post",
+//   user: req.user,
+//   success: "Post created successfully",
+// });
+//     res.redirect("/posts?success=true");
+//   } catch (err) {
+//     res.render("newPost", {
+//       title: "Create Post",
+//       user: req.user,
+//       error: "Something went wrong",
+//     });
+//   }
+// });
+
+// this is real create post
+
+// creating new post
 exports.createPost = asyncHandler(async (req, res) => {
-  try {
-    const { title, content } = req.body;
-    // console.log(req.files);
-    // const newPost = await Post.create({
-    //   title,
-    //   content,
-    //   author: req.user._id,
-    // });
-    // console.log(newPost);
-    // res.redirect("/posts");
+  const { title, content } = req.body;
 
-    // validation
-    // if (!req.files || req.files.length === 0) {
-    //   return res.render("newPost", {
-    //     title: "Create Post",
-    //     user: req.user,
-    //     error: "At least one image is required",
-    //   });
-    // }
+  const images = await Promise.all(
+    req.files.map(async (file) => {
+      // console.log(images);
+      // save the images into db
+      const newFile = new File({
+        url: file.path,
+        public_id: file.filename,
+        uploaded_by: req.user._id,
+      });
+      await newFile.save();
+      // console.log(newFile);
+      return {
+        url: newFile.url,
+        public_id: newFile.public_id,
+      };
+    }),
+  );
 
-    const images = await Promise.all(
-      req.files.map(async (file) => {
-        // console.log(images);
-        // save the images into db
-        const newFile = new File({
-          url: file.path,
-          public_id: file.filename,
-          uploaded_by: req.user._id,
-        });
-        await newFile.save();
-        // console.log(newFile);
-        return {
-          url: newFile.url,
-          public_id: newFile.public_id,
-        };
-      }),
-    );
-
-    // create post
-    const newPost = new Post({
-      title,
-      content,
-      author: req.user._id,
-      images,
-    });
-    await newPost.save();
-    // res.render("newPost", {
-    //   title: "Create Post",
-    //   user: req.user,
-    //   success: "Post created successfully",
-    // });
-    res.redirect("/posts?success=true");
-  } catch (err) {
-    res.render("newPost", {
-      title: "Create Post",
-      user: req.user,
-      error: "Something went wrong",
-    });
-  }
+  // create post
+  const newPost = new Post({
+    title,
+    content,
+    author: req.user._id,
+    images,
+  });
+  await newPost.save();
+  res.render("newPost", {
+    title: "Create Post",
+    user: req.user,
+    success: "Post created successfully",
+    error: "",
+  });
 });
