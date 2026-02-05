@@ -11,6 +11,7 @@ const userRoutes = require("./routes/authRoute");
 const passportConfig = require("./config/passport");
 const postRoutes = require("./routes/postRoute");
 const errorHandler = require("./middlewares/errorHandler");
+const commentRoutes = require("./routes/commentRoute");
 
 const app = express();
 app.use(express.json());
@@ -48,6 +49,7 @@ app.use("/", userRoutes);
 // app.use("/auth", userRoutes);
 // Post route
 app.use("/posts", postRoutes);
+app.use("/", commentRoutes);
 
 // error handler
 app.use(errorHandler);
