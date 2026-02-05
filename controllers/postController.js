@@ -126,3 +126,19 @@ exports.getPosts = asyncHandler(async (req, res) => {
     error: "",
   });
 });
+
+// get post by ID
+exports.getPostById = asyncHandler(async (req, res) => {
+  const post = await Post.findById(req.params.id).populate(
+    "author",
+    "username  ",
+  );
+  // .populate("comments");
+  res.render("postDetails", {
+    title: "Posts",
+    post,
+    user: req.user,
+    success: "",
+    error: "",
+  });
+});

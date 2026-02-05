@@ -3,6 +3,7 @@ const {
   getPostForm,
   createPost,
   getPosts,
+  getPostById,
 } = require("../controllers/postController");
 const upload = require("../config/multer");
 const { ensureAuthenticated } = require("../middlewares/auth");
@@ -22,5 +23,8 @@ postRoutes.post(
 
 // get all posts
 postRoutes.get("/", getPosts);
+
+// get post by ID
+postRoutes.get("/:id", getPostById);
 
 module.exports = postRoutes;
