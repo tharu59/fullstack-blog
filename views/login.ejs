@@ -1,0 +1,55 @@
+<%-include("partials/header.ejs") %>
+<h1 class="text-center mb-4">
+  <i class="fas fa-sign-in-alt text-primary me-2"></i>Login
+</h1>
+
+
+<!-- ADD THIS ERROR DISPLAY BLOCK -->
+<% if (typeof error !== 'undefined' && error && error !== "") { %>
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <i class="fas fa-exclamation-circle me-2"></i>
+  <%= error %>
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+<% } %>
+
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-4">
+    <div class="card shadow">
+      <div class="card-body p-4">
+        <form action="/login" method="post">
+          <div class="mb-3">
+            <label for="email" class="form-label"
+              ><i class="fas fa-envelope me-2"></i>Email</label
+            >
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              name="email"
+              placeholder="Enter your Email"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label"
+              ><i class="fas fa-lock me-2"></i>Password</label
+            >
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              name="password"
+              placeholder="Enter your Password"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary w-100">
+            Login <i class="fas fa-arrow-right ms-2"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<%-include("partials/footer.ejs")%>
