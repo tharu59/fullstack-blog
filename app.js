@@ -23,6 +23,7 @@ const HOST = process.env.host || "localhost";
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
 
 // session middleware
 app.use(

@@ -1,16 +1,46 @@
 const User = require("../models/User");
+const Post = require("../models/Post");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const passport = require("passport");
 
-exports.home = asyncHandler((req, res) => {
-  // `Welcome to Fullstack Blog App! hosted on the server at http://${HOST}:${PORT}`,
-  // `Welcome to Fullstack Blog App...!`,
-  res.render("home", {
-    user: req.user,
-    error: "",
-    title: "Home",
-  });
+exports.home = asyncHandler(async (req, res) => {
+  try {
+    const posts = await Post.find()
+      .populate("author", "username")
+      .sort({ createdAt: -1 })
+      .limit(6);
+    
+    const postCount = await Post.countDocuments();
+    const userCount = await User.countDocuments();
+    
+    // Aggregation for total views
+    const viewStats = await Post.aggregate([
+      { $group: { _id: null, totalViews: { $sum: "$views" } } }
+    ]);
+    const totalViews = viewStats.length > 0 ? viewStats[0].totalViews : 0;
+
+    res.render("home", {
+      user: req.user,
+      posts,
+      stats: {
+        posts: postCount,
+        users: userCount,
+        views: totalViews
+      },
+      title: "Home",
+      error: ""
+    });
+  } catch (error) {
+    console.log(error);
+    res.render("home", {
+      user: req.user,
+      posts: [],
+      stats: { posts: 0, users: 0, views: 0 },
+      title: "Home",
+      error: "Could not load data"
+    });
+  }
 });
 
 // Render Register Page

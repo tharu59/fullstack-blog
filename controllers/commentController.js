@@ -41,3 +41,76 @@ exports.addComment = asyncHandler(async (req, res) => {
   //   redirect
   res.redirect(`/posts/${postId}`);
 });
+
+// delete Comment
+exports.deleteComment = asyncHandler(async (req, res) => {
+  const { postId, id } = req.params;
+  // find comment
+  const comment = await Comment.findById(id);
+  if (!comment) {
+    return res.redirect(`/posts/${postId}`);
+  }
+  // check ownership
+  if (comment.author.toString() !== req.user._id.toString()) {
+    return res.redirect(`/posts/${postId}`);
+  }
+  // delete comment
+  await Comment.findByIdAndDelete(id);
+  // remove from post
+  await Post.findByIdAndUpdate(postId, {
+    $pull: { comments: id },
+  });
+  res.redirect(`/posts/${postId}`);
+});
+
+// Get Edit Comment Form
+exports.getEditComment = asyncHandler(async (req, res) => {
+  const { postId, id } = req.params;
+  const comment = await Comment.findById(id);
+
+  if (!comment) {
+    return res.redirect(`/posts/${postId}`);
+  }
+  // Check ownership
+  if (comment.author.toString() !== req.user._id.toString()) {
+    return res.redirect(`/posts/${postId}`);
+  }
+
+  res.render("editComment", {
+    title: "Edit Comment",
+    comment,
+    postId,
+    user: req.user,
+    error: ""
+  });
+});
+
+// Update Comment
+exports.updateComment = asyncHandler(async (req, res) => {
+  const { postId, id } = req.params;
+  const { content } = req.body;
+  
+  const comment = await Comment.findById(id);
+
+  if (!comment) {
+    return res.redirect(`/posts/${postId}`);
+  }
+  if (comment.author.toString() !== req.user._id.toString()) {
+    return res.redirect(`/posts/${postId}`);
+  }
+
+  if (!content) {
+    return res.render("editComment", {
+      title: "Edit Comment",
+      comment,
+      postId,
+      user: req.user,
+      error: "Content cannot be empty"
+    });
+  }
+
+  comment.content = content;
+  await comment.save();
+
+  res.redirect(`/posts/${postId}`);
+});

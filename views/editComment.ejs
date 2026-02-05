@@ -1,0 +1,34 @@
+<%- include("partials/header.ejs", {title: "Edit Comment", user: user}) %>
+
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow border-0">
+        <div class="card-header bg-white border-0 py-3">
+          <h4 class="mb-0 fw-bold"><i class="fas fa-edit text-primary me-2"></i>Edit Comment</h4>
+        </div>
+        <div class="card-body p-4">
+          <form action="/posts/<%= postId %>/comments/<%= comment._id %>/update" method="post">
+            <div class="mb-3">
+              <label for="content" class="form-label text-muted fw-bold">Comment Content</label>
+              <textarea 
+                class="form-control" 
+                id="content" 
+                name="content" 
+                rows="5" 
+                required
+              ><%= comment.content %></textarea>
+            </div>
+            
+            <div class="d-flex justify-content-end gap-2">
+              <a href="/posts/<%= postId %>" class="btn btn-light text-muted">Cancel</a>
+              <button type="submit" class="btn btn-primary px-4">Update Comment</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include("partials/footer.ejs") %>

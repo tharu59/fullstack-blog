@@ -1,16 +1,7 @@
 <%- include("partials/header.ejs") %>
 <h1 class="text-center mb-4">
-  <i class="fas fa-plus-circle text-success me-2"></i>Create New Post
+  <i class="fas fa-edit text-warning me-2"></i>Edit Post
 </h1>
-
-<!-- Success message -->
-<% if (typeof success !== 'undefined' && success) { %>
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-  <i class="fas fa-check-circle me-2"></i>
-  <%= success %>
-  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-</div>
-<% } %>
 
 <!-- Error message (add this too for consistency) -->
 <% if (typeof error !== 'undefined' && error) { %>
@@ -25,7 +16,7 @@
   <div class="col-md-8 col-lg-6">
     <div class="card shadow">
       <div class="card-body p-4">
-        <form action="/posts/add" method="post" enctype="multipart/form-data"  autocomplete="off">
+        <form action="/posts/<%= post._id %>/update" method="post" enctype="multipart/form-data" autocomplete="off">
           <div class="mb-3">
             <label for="title" class="form-label">
               <i class="fas fa-heading me-2"></i>Title
@@ -35,8 +26,9 @@
               class="form-control"
               id="title"
               name="title"
+              value="<%= post.title %>"
               placeholder="Enter post title" 
-              
+              required
             />
           </div>
 
@@ -50,8 +42,8 @@
               name="content" 
               rows="8" 
               placeholder="Write your post content here..."
-              
-            ></textarea>
+              required
+            ><%= post.content %></textarea>
           </div>
 
           <div class="mb-3">
@@ -59,19 +51,16 @@
               <i class="fas fa-tag me-2"></i>Category
             </label>
             <select class="form-select" id="category" name="category">
-              <option value="General">General</option>
-              <option value="Technology">Technology</option>
-              <option value="Coding">Coding</option>
-              <option value="Lifestyle">Lifestyle</option>
-              <option value="Design">Design</option>
-              <option value="Health">Health</option>
-              <option value="Business">Business</option>
+              <% const categories = ["General", "Technology", "Coding", "Lifestyle", "Design", "Health", "Business"]; %>
+              <% categories.forEach(cat => { %>
+                <option value="<%= cat %>" <%= post.category === cat ? 'selected' : '' %>><%= cat %></option>
+              <% }) %>
             </select>
           </div>
 
           <div class="mb-3">
             <label for="image" class="form-label">
-              <i class="fas fa-images me-2"></i>Images (Multiple allowed)
+              <i class="fas fa-images me-2"></i>Add New Images (Optional)
             </label>
             <input 
               type="file" 
@@ -80,16 +69,28 @@
               name="images" 
               multiple 
               accept="image/*" 
-              
               onchange="previewImages()"
             />
-            <div class="form-text">Upload at least one image (JPG, PNG, GIF)</div>
             <div class="mt-3" id="image-preview"></div>
           </div>
+          
+          <% if(post.images && post.images.length > 0) { %>
+            <div class="mb-3">
+              <label class="form-label">Current Images:</label>
+              <div class="d-flex flex-wrap gap-2">
+                <% post.images.forEach(img => { %>
+                  <img src="<%= img.url %>" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">
+                <% }) %>
+              </div>
+            </div>
+          <% } %>
 
-          <button type="submit" class="btn btn-success w-100">
-            <i class="fas fa-paper-plane me-2"></i>Create Post
-          </button>
+          <div class="d-flex justify-content-between">
+            <a href="/posts/<%= post._id %>" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-warning text-white">
+              <i class="fas fa-save me-2"></i>Update Post
+            </button>
+          </div>
         </form>
       </div>
     </div>
@@ -100,7 +101,6 @@
     const preview = document.getElementById("image-preview");
     preview.innerHTML = "";
     const files = document.getElementById("image").files;
-    // console.log(files)
     for(let i=0;i<files.length;i++)
     {
       const img = document.createElement("img");
@@ -110,50 +110,6 @@
       preview.appendChild(img);
     }
   }
-  function validationForm(){
-    const title = document.getElementById("title").value;
-    const content = document.getElementById("content").value
-    if(!title || !content)
-  {
-    alert("Please fill in all fields");
-    return false;
-  }
-
-  // from Gemini
-// const titleEl = document.getElementById("title");
-//   const contentEl = document.getElementById("content");
-//   const imageEl = document.getElementById("image");
-
-//   // 1. Check Title
-//   if (titleEl.value.trim() === "") {
-//     titleEl.setCustomValidity("Please enter a title"); 
-//     titleEl.reportValidity(); 
-//     return false;
-//   } else {
-//     titleEl.setCustomValidity(""); 
-//   }
-
-//   // 2. Check Content
-//   if (contentEl.value.trim() === "") {
-//     contentEl.setCustomValidity("Please fill out the details"); 
-//     contentEl.reportValidity(); 
-//     return false;
-//   } else {
-//     contentEl.setCustomValidity("");
-//   }
-
-//   // 3. Check Images
-//   if (imageEl.files.length === 0) {
-//     imageEl.setCustomValidity("At least one image is required");
-//     imageEl.reportValidity();
-//     return false;
-//   } else {
-//     imageEl.setCustomValidity("");
-//   }
-
-  return true;
-  }
-
 </script>
 
 <%- include("partials/footer.ejs") %>
